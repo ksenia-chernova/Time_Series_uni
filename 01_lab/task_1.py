@@ -1,6 +1,4 @@
 import pandas as pd
-
-import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Графики изменения индексов
@@ -18,11 +16,9 @@ def graph(data):
 # 1. Существуют ли в наборе данных взаимосвязанные столбцы?
 def point_1(data):
     correlation_matrix = data.corr()
+    print("Матрица корреляции:")
     print(correlation_matrix)
-
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", center=0, fmt='.2f')
-    plt.show()
+    print()
 
 # 2. Вывести среднее значение изучаемой величины и дисперсию
 def point_2(data):
@@ -33,14 +29,16 @@ def point_2(data):
     print(mean_value)
     print("Дисперсия:")
     print(variance_values)
+    print()
 
-# 3. Изменяется ли диапазон доступных значений с изменением 
-# временного периода или другой подвергаемой анализу характеристики?
-def point_3(data):
+# 5. Построить гистограмму абсолютных значений и гистограмму разностей. Сделать выводы.
+def point_5(data):
     pass
 
 if __name__== "__main__":
     # dax - Германия, smi - Швейцария, cac - Франция, ftse - Великобритания
     data = pd.read_csv("data/EuStockMarkets.csv")
+    # point_1(data)
+    point_2(data)
+    point_5(data)
     graph(data)
-    point_3(data)
