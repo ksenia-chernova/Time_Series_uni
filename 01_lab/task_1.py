@@ -98,13 +98,18 @@ def point_6(data):
         corr = period_data[stock1].corr(period_data[stock2])
         print(f"  {period}: {corr:.3f}")
 
+def point_7(data):
+    cov = data.cov()
+    print(cov)
+
 if __name__== "__main__":
     # dax - Германия, smi - Швейцария, cac - Франция, ftse - Великобритания
     data = pd.read_csv("data/EuStockMarkets.csv")
-    graph(data)
+    # graph(data)
     del data['rownames']
     # point_1(data)
     # point_2(data)
     # point_5(data)
-    point_6(data)
+    # point_6(data)
+    point_7(data)
     
