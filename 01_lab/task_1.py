@@ -102,6 +102,12 @@ def point_7(data):
     cov = data.cov()
     print(cov)
 
+"""
+8. Прочитать про ложную корреляцию стр. 135 - 137. Найти и продемонстрировать интересную ложную корреляцию на упомянутом сайте.
+https://tylervigen.com/spurious-correlations
+https://tylervigen.com/spurious/correlation/5139_popularity-of-the-first-name-alaina_correlates-with_popularity-of-the-trollface-meme
+"""
+
 if __name__== "__main__":
     # dax - Германия, smi - Швейцария, cac - Франция, ftse - Великобритания
     data = pd.read_csv("data/EuStockMarkets.csv")
