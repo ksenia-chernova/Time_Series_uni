@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 
 # Графики изменения индексов
@@ -44,6 +45,59 @@ def point_5(data):
     returns.hist(bins=50, edgecolor='black')
     plt.show()
 
+# 6. Построить две диаграммы рассеяния: для определения 
+# взаимосвязи между ценами двух акций в отдельные моменты времени и для отслеживания их временных изменений.
+def point_6(data):
+    stock1 = 'DAX'
+    stock2 = 'SMI'
+    data['period'] = pd.cut(data.index, bins=3, labels=['Начало', 'Середина', 'Конец'])
+
+
+    plt.figure(figsize=(10, 8))
+    plt.scatter(data[stock1], data[stock2], alpha=0.6, s=30, c='steelblue', edgecolors='black', linewidth=0.5)
+    z = np.polyfit(data[stock1], data[stock2], 1)
+    p = np.poly1d(z)
+    plt.plot(data[stock1], p(data[stock1]), "red", linewidth=2, label=f'Линия тренда')
+    correlation = data[stock1].corr(data[stock2])
+    plt.title(f'Рис. 1: Взаимосвязь между {stock1} и {stock2}\nКорреляция: {correlation:.3f}', 
+            fontsize=14, fontweight='bold')
+    plt.xlabel(f'{stock1} (пункты)', fontsize=12)
+    plt.ylabel(f'{stock2} (пункты)', fontsize=12)
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+    plt.tight_layout()
+
+
+    plt.figure(figsize=(10, 8))
+    colors = {'Начало': 'blue', 'Середина': 'green', 'Конец': 'red'}
+    for period, color in colors.items():
+        period_data = data[data['period'] == period]
+        plt.scatter(period_data[stock1], period_data[stock2], 
+                c=color, label=period, alpha=0.6, s=30, edgecolors='black', linewidth=0.5)
+    for period, color in colors.items():
+        period_data = data[data['period'] == period]
+        if len(period_data) > 1:
+            z = np.polyfit(period_data[stock1], period_data[stock2], 1)
+            p = np.poly1d(z)
+            plt.plot(period_data[stock1], p(period_data[stock1]), 
+                    color=color, linewidth=2, linestyle='--')
+    plt.title(f'Рис. 2: Изменение взаимосвязи {stock1} и {stock2} во времени', 
+            fontsize=14, fontweight='bold')
+    plt.xlabel(f'{stock1} (пункты)', fontsize=12)
+    plt.ylabel(f'{stock2} (пункты)', fontsize=12)
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.show()
+
+    print(f"\nОбщая корреляция между {stock1} и {stock2}: {correlation:.3f}")
+
+    print("\nКорреляция по периодам:")
+    for period in ['Начало', 'Середина', 'Конец']:
+        period_data = data[data['period'] == period]
+        corr = period_data[stock1].corr(period_data[stock2])
+        print(f"  {period}: {corr:.3f}")
+
 if __name__== "__main__":
     # dax - Германия, smi - Швейцария, cac - Франция, ftse - Великобритания
     data = pd.read_csv("data/EuStockMarkets.csv")
@@ -51,5 +105,6 @@ if __name__== "__main__":
     del data['rownames']
     # point_1(data)
     # point_2(data)
-    point_5(data)
+    # point_5(data)
+    point_6(data)
     
