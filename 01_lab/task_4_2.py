@@ -14,9 +14,12 @@ def arma_manual_prediction(data, n_predict=100):
     model = ARIMA(df['PT08.S3(NOx)'], order=(2, 0, 2))
     model_fit = model.fit()
     
-    ar_params = np.array([0.6, 0.2])      # φ1, φ2
-    ma_params = np.array([0.3, 0.1])      # θ1, θ2
-    const = 800  # примерно среднее значение ряда
+    model = ARIMA(df['PT08.S3(NOx)'], order=(2, 0, 2))
+    model_fit = model.fit()
+
+    ar_params = model_fit.arparams  # φ1, φ2
+    ma_params = model_fit.maparams  # θ1, θ2
+    const = model_fit.params.get('const', 0)
     
     residuals = model_fit.resid.values
     
