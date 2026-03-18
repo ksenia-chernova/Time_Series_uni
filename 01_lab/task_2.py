@@ -44,7 +44,6 @@ def ar_model(data):
         print(f"Значимые лаги: {significant_lags[:10]}")
     else:
         optimal_lag = 3
-        print("Значимых лагов не найдено, используем lag=3")
     
     print(f"Выбранный лаг для модели: {optimal_lag}")
     
