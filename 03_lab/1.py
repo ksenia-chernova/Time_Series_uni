@@ -1,37 +1,53 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 
 df = pd.read_csv("data/lab3_data6.txt", sep="\t")
 df.columns = ['Nothing', 'Aggressive', 'White noise', 'Classical', 'Rhythmic']
-df.insert(0, 'Interval', range(len(df)))
 
-fig, axes = plt.subplots(5, 1, figsize=(10, 12))
+fs = 20
+dt = 1/fs
 
-axes[0].plot(df['Interval'], df['Nothing'], color='red', label='Nothing')
-axes[0].set_ylabel('Heart rate')
-axes[0].legend()
-axes[0].grid()
+def rr_to_uniform_series(rr_intervals, dt, fs):
+    rr_seconds = np.array(rr_intervals) / 1000.0
+    beat_times = np.cumsum(rr_seconds)
+    total_duration = beat_times[-1]
+    n_samples = int(np.ceil(total_duration / dt)) + 1
+    time_axis = np.arange(n_samples) * dt
+    uniform_series = np.zeros(n_samples)
+    
+    for beat_time in beat_times:
+        idx = int(np.round(beat_time / dt))
+        if idx < n_samples:
+            uniform_series[idx] = 1
+    
+    return uniform_series, time_axis
 
-axes[1].plot(df['Interval'], df['Aggressive'], color='green', label='Aggressive')
-axes[1].set_ylabel('Heart rate')
-axes[1].legend()
-axes[1].grid()
+fig, axes = plt.subplots(5, 1, figsize=(15, 12))
 
-axes[2].plot(df['Interval'], df['White noise'], color='blue', label='White noise')
-axes[2].set_ylabel('Heart rate')
-axes[2].legend()
-axes[2].grid()
+titles = ['Nothing', 'Aggressive', 'White noise', 'Classical', 'Rhythmic']
+colors = ['red', 'green', 'blue', 'orange', 'black']
 
-axes[3].plot(df['Interval'], df['Classical'], color='orange', label='Classical')
-axes[3].set_ylabel('Heart rate')
-axes[3].legend()
-axes[3].grid()
-
-axes[4].plot(df['Interval'], df['Rhythmic'], color='black', label='Rhythmic')
-axes[4].set_xlabel('Interval')
-axes[4].set_ylabel('Heart rate')
-axes[4].legend()
-axes[4].grid()
+for idx, (title, color) in enumerate(zip(titles, colors)):
+    rr_intervals = df[title].dropna().values
+    uniform_series, time_axis = rr_to_uniform_series(rr_intervals, dt, fs)
+    
+    time_limit = 10
+    mask = time_axis <= time_limit
+    
+    beat_times = time_axis[uniform_series == 1]
+    for beat_time in beat_times[beat_times <= time_limit]:
+        axes[idx].axvline(x=beat_time, color=color, alpha=0.5, linewidth=0.5)
+    
+    axes[idx].plot(time_axis[mask], uniform_series[mask], 
+                   color=color, linewidth=1.5)
+    
+    axes[idx].set_ylabel('Сигнал ударов')
+    axes[idx].set_xlabel('Время (с)')
+    axes[idx].set_title(f'{title}')
+    axes[idx].grid(True, alpha=0.3)
+    axes[idx].set_ylim(-0.1, 1.1)
+    axes[idx].set_xlim(0, time_limit)
 
 plt.tight_layout()
 plt.show()
