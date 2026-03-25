@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from math import factorial
 
 def taylor_coeffs_binomial(degree, n_max, point=0):
     coeffs = []
@@ -7,9 +8,14 @@ def taylor_coeffs_binomial(degree, n_max, point=0):
         if n == 0:
             coeff = (1 + point) ** degree
         else:
-            prev_coeff = coeffs[-1]
-            coeff = prev_coeff * (degree - n + 1) / n * (1/(1+point))
+            num = 1.0
+            for k in range(n):
+                num *= (degree - k)
+            f = factorial(n)
+            coeff = (num / f) * ((1 + point) ** (degree - n))
+        
         coeffs.append(coeff)
+    print(coeffs)
     return coeffs
 
 def taylor_series_at_point(x_vals, coeffs, point=0):
