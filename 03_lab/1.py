@@ -5,10 +5,23 @@ import matplotlib.pyplot as plt
 df = pd.read_csv("data/lab3_data6.txt", sep="\t")
 df.columns = ['Nothing', 'Aggressive', 'White noise', 'Classical', 'Rhythmic']
 
+# частота дискретизации - 20 Гц
 fs = 20
+# шаг дискретизации
 dt = 1/fs
 
 def rr_to_uniform_series(rr_intervals, dt, fs):
+    # Шаг 1: перевод в секунды
+    # rr_seconds = [0.670, 0.750, 0.690, ...]
+    # Шаг 2: вычисление моментов ударов (накопленная сумма)
+    # beat_times = [0.670, 1.420, 2.110, ...]
+    #            ↑ удар1   ↑ удар2    ↑ удар3
+    # Шаг 3: создание равномерной сетки времени
+    # time_axis = [0.00, 0.05, 0.10, 0.15, ...]  # шаг dt = 0.05с
+    # Шаг 4: размещение меток ударов
+    # uniform_series = [0, 0, 0, ..., 1, ..., 0]
+    # ↑ в моменте, ближайшем к удару, ставится 1
+    
     rr_seconds = np.array(rr_intervals) / 1000.0
     beat_times = np.cumsum(rr_seconds)
     total_duration = beat_times[-1]
@@ -32,7 +45,7 @@ for idx, (title, color) in enumerate(zip(titles, colors)):
     rr_intervals = df[title].dropna().values
     uniform_series, time_axis = rr_to_uniform_series(rr_intervals, dt, fs)
     
-    time_limit = 10
+    time_limit = 30
     mask = time_axis <= time_limit
     
     beat_times = time_axis[uniform_series == 1]
