@@ -2,10 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sympy as sp
 
-def taylor_coeffs_binomial(n_max, point=0):
+def taylor_coeffs_binomial(n_max, degree, point=0):
     coeffs = []
     x = sp.symbols('x')
-    func = (1 + x) **0.5
+    func = (1 + x) ** degree
     for n in range(n_max + 1):
         if n == 0:
             # f(a)
@@ -45,7 +45,7 @@ plt.plot(x, y_exact, 'k-', linewidth=2,
 colors = plt.cm.viridis(np.linspace(0, 1, len(n_vals)))
 
 for N, color in zip(n_vals, colors):
-    coeffs = taylor_coeffs_binomial(N-1, expansion_point)
+    coeffs = taylor_coeffs_binomial(N-1, degree, expansion_point)
     y_approx = taylor_series_at_point(x, coeffs, expansion_point)
     plt.plot(x, y_approx, '--', color=color, 
              label=f'{N} членов')
